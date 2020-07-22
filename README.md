@@ -61,3 +61,6 @@
 	        }
 	    })
 	    .start();
+### 注意
+如果使用了权限申请前的回调，回调方法`beforePermission()`中会传入`ApplyPermissionTask`对象,  
+需要调用`ApplyPermissionTask.run()`，才能完成权限的申请
