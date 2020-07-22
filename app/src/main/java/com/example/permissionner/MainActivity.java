@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.take_photo_btn:
                 Permissionner
                         .with(this)
-                        .addPermissions(Manifest.permission.CAMERA)
-                        .addPreApplyCallback(new PreApplyCallback() {
+                        .addPermissions(Manifest.permission.CAMERA) // 要申请的权限
+                        .addPreApplyCallback(new PreApplyCallback() {  // 权限申请前的回调
                             @Override
                             public void beforePermission(Permissionner.ApplyPermissionTask applyPermissionTask, String[] unGrantedPermissions) {
                                 showPermissionExplainDialog(MainActivity.this, applyPermissionTask, unGrantedPermissions);
                             }
                         })
-                        .addPermissionResultCallback(new OnPermissionResultCallback() {
+                        .addPermissionResultCallback(new OnPermissionResultCallback() { // 结果回调
                             @Override
                             public void onAllGranted() {
                                 takePhoto();
