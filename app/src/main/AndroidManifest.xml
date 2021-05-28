@@ -32,10 +32,12 @@
             android:name=".permission.activity.LocationActivity"
             android:launchMode="singleTop"
             android:theme="@style/TransparentStyle" />
-        <activity
+
+        <!-- 使用Fragment作为权限申请的载体，不再需要Activity-->
+        <!--<activity
             android:name=".permission.activity.PermissionActivity"
             android:launchMode="singleTop"
-            android:theme="@style/TransparentStyle" />
+            android:theme="@style/TransparentStyle" />-->
     </application>
 
 </manifest>

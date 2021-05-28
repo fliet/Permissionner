@@ -2,7 +2,12 @@ package com.example.permissionner.permission;
 
 import android.content.Context;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.example.permissionner.permission.activity.PermissionActivity;
+import com.example.permissionner.permission.activity.PermissionFragment;
 import com.example.permissionner.permission.callback.OnPermissionResultCallback;
 import com.example.permissionner.permission.callback.PreApplyCallback;
 
@@ -16,6 +21,7 @@ import com.example.permissionner.permission.callback.PreApplyCallback;
 public class Permissionner {
     private static final String TAG = "Permissionner";
     private Context context;
+    private FragmentManager fragmentManager;
 
     /**
      * 申请的权限
@@ -40,6 +46,14 @@ public class Permissionner {
 
     public static Builder with(Context context) {
         return new Builder(context);
+    }
+
+    public static Builder with(Fragment fragment) {
+        return new Builder(fragment);
+    }
+
+    public static Builder with(FragmentActivity fragmentActivity) {
+        return new Builder(fragmentActivity);
     }
 
     /**
@@ -79,7 +93,9 @@ public class Permissionner {
      */
     private void applyPermission() {
         // 开始申请权限
-        PermissionActivity.requestPermission(context, unGrantedPermissions, onPermissionResultCallback);
+        //PermissionActivity.requestPermission(context, unGrantedPermissions, onPermissionResultCallback);
+
+        PermissionFragment.requestPermission(fragmentManager, unGrantedPermissions, onPermissionResultCallback);
     }
 
 
@@ -91,6 +107,16 @@ public class Permissionner {
 
         Builder(Context context) {
             permissionner.context = context;
+        }
+
+        Builder(Fragment fragment) {
+            permissionner.context = fragment.getContext();
+            permissionner.fragmentManager = fragment.getFragmentManager();
+        }
+
+        Builder(FragmentActivity activity) {
+            permissionner.context = activity;
+            permissionner.fragmentManager = activity.getSupportFragmentManager();
         }
 
         public Builder addPermissions(String... applyPermissions) {
