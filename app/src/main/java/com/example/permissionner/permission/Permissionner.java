@@ -1,15 +1,16 @@
 package com.example.permissionner.permission;
 
 import android.content.Context;
+import android.view.View;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.permissionner.permission.activity.PermissionActivity;
 import com.example.permissionner.permission.activity.PermissionFragment;
 import com.example.permissionner.permission.callback.OnPermissionResultCallback;
-import com.example.permissionner.permission.callback.PreApplyCallback;
+import com.example.permissionner.permission.callback.ApplyBeforeCallback;
+import com.example.permissionner.permission.dialog.BaseDialog;
 
 /**
  * 权限申请者
@@ -41,7 +42,7 @@ public class Permissionner {
      * 权限解释回调
      * 用于权限申请前，对权限的解释
      */
-    private PreApplyCallback preApplyCallback;
+    private ApplyBeforeCallback applyBeforeCallback;
 
 
     public static Builder with(Context context) {
@@ -76,15 +77,26 @@ public class Permissionner {
         // 没有未授权的权限，直接调用成功回调
         if (unGrantedPermissions.length == 0) {
             onPermissionResultCallback.onAllGranted();
-        } else if (preApplyCallback == null) { // 如果没有权限解释框，那么直接申请权限。否则的话先调用弹出权限解释框，再申请权限
+        } else if (applyBeforeCallback == null) { // 如果没有权限解释框，那么直接申请权限。否则的话先调用弹出权限解释框，再申请权限
             applyPermission();
         } else {
-            preApplyCallback.beforePermission(new ApplyPermissionTask() {
+            final BaseDialog permissionExplainDialog = applyBeforeCallback.beforeApplication(unGrantedPermissions);
+            permissionExplainDialog.getPositionButton().setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void run() {
+                public void onClick(View view) {
+                    permissionExplainDialog.dismiss();
                     applyPermission();
                 }
-            }, unGrantedPermissions);
+            });
+
+            permissionExplainDialog.getNegativeButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    permissionExplainDialog.dismiss();
+                }
+            });
+
+            permissionExplainDialog.show();
         }
     }
 
@@ -93,8 +105,6 @@ public class Permissionner {
      */
     private void applyPermission() {
         // 开始申请权限
-        //PermissionActivity.requestPermission(context, unGrantedPermissions, onPermissionResultCallback);
-
         PermissionFragment.requestPermission(fragmentManager, unGrantedPermissions, onPermissionResultCallback);
     }
 
@@ -124,8 +134,8 @@ public class Permissionner {
             return this;
         }
 
-        public Builder addPreApplyCallback(PreApplyCallback preApplyCallback) {
-            permissionner.preApplyCallback = preApplyCallback;
+        public Builder addPreApplyCallback(ApplyBeforeCallback applyBeforeCallback) {
+            permissionner.applyBeforeCallback = applyBeforeCallback;
             return this;
         }
 

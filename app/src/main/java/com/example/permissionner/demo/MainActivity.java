@@ -1,4 +1,4 @@
-package com.example.permissionner;
+package com.example.permissionner.demo;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +15,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.permissionner.R;
 import com.example.permissionner.permission.BluetoothPermissionner;
 import com.example.permissionner.permission.LocationPermissionner;
 import com.example.permissionner.permission.Permissionner;
 import com.example.permissionner.permission.callback.ActivityResultCallback;
 import com.example.permissionner.permission.callback.OnPermissionResultCallback;
-import com.example.permissionner.permission.callback.PreApplyCallback;
+import com.example.permissionner.permission.callback.ApplyBeforeCallback;
+import com.example.permissionner.permission.dialog.BaseDialog;
 
 import java.util.Arrays;
 
@@ -47,10 +49,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Permissionner
                         .with(this)
                         .addPermissions(Manifest.permission.CAMERA) // 要申请的权限
-                        .addPreApplyCallback(new PreApplyCallback() {  // 权限申请前的回调
+                        .addPreApplyCallback(new ApplyBeforeCallback() {  // 权限申请前的回调
                             @Override
-                            public void beforePermission(Permissionner.ApplyPermissionTask applyPermissionTask, String[] unGrantedPermissions) {
-                                showPermissionExplainDialog(MainActivity.this, applyPermissionTask, unGrantedPermissions);
+                            public BaseDialog beforeApplication(String[] unGrantedPermissions) {
+                                return new PermissionExplainDialog(MainActivity.this, unGrantedPermissions);
                             }
                         })
                         .addPermissionResultCallback(new OnPermissionResultCallback() { // 结果回调

@@ -75,8 +75,10 @@ public class PermissionFragment extends Fragment {
             if (grantedPermissions.size() == currApplyPermissions.length)
                 onPermissionResultCallback.onAllGranted();
         }
-        if (deniedPermissions.size() > 0)
+        if (deniedPermissions.size() > 0) {
             onPermissionResultCallback.onDenied(deniedPermissions.toArray(new String[0]));
+        }
+
 
         if (getFragmentManager() != null) {
             getFragmentManager().popBackStack();
